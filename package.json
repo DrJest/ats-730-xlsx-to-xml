@@ -1,0 +1,25 @@
+{
+  "name": "ats730",
+  "version": "1.0.0",
+  "description": "Converte da XLS/XLSX al formato XML richiesto da ATS per invio dati prestazioni",
+  "main": "index.js",
+  "dependencies": {
+    "moment": "^2.24.0",
+    "node-xlsx": "^0.15.0",
+    "xmlbuilder": "^13.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DrJest/ats-730-xlsx-to-xml.git"
+  },
+  "author": "Simone Albano",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DrJest/ats-730-xlsx-to-xml/issues"
+  },
+  "homepage": "https://github.com/DrJest/ats-730-xlsx-to-xml#readme"
+}
