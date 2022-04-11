@@ -4,7 +4,7 @@
   "description": "Converte da XLS/XLSX al formato XML richiesto da ATS per invio dati prestazioni",
   "main": "index.js",
   "dependencies": {
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "node-xlsx": "^0.15.0",
     "xmlbuilder": "^13.0.2"
   },
