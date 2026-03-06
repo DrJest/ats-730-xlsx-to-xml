@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATS 730 - Conversione XLSX a XML</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+      text-align: center;
+      font-size: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input[type="text"],
+    input[type="file"] {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e1e8ed;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    input[type="text"]:focus,
+    input[type="file"]:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    input[type="file"] {
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    input[type="file"]::file-selector-button {
+      padding: 8px 16px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      margin-right: 10px;
+      transition: background 0.3s;
+    }
+
+    input[type="file"]::file-selector-button:hover {
+      background: #5568d3;
+    }
+
+    .codes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .code-input {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .code-input label {
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+
+    .code-input input {
+      padding: 10px;
+      font-size: 13px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .progress {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      background: #f0f4ff;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .progress.show {
+      display: block;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #e1e8ed;
+      border-top-color: #667eea;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .message {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 6px;
+      text-align: center;
+      font-weight: 500;
+      display: none;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .info {
+      background: #f9f9f9;
+      padding: 15px;
+      border-left: 4px solid #667eea;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #666;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🏥 ATS 730</h1>
+    <p style="text-align: center; color: #999; font-size: 14px; margin-bottom: 30px;">Conversione XLSX → XML</p>
+
+    <div class="info">
+      <strong>Istruzioni:</strong> Carica un file XLSX e scarica un ZIP contenente il file XML convertito secondo le specifiche ATS.
+    </div>
+
+    <form id="conversionForm">
+      <div class="codes-grid">
+        <div class="code-input">
+          <label for="codiceRegione">Codice Regione</label>
+          <input type="text" id="codiceRegione" name="codiceRegione" value="030" maxlength="3">
+        </div>
+        <div class="code-input">
+          <label for="codiceAsl">Codice ASL</label>
+          <input type="text" id="codiceAsl" name="codiceAsl" value="322" maxlength="3">
+        </div>
+        <div class="code-input">
+          <label for="codiceSSA">Codice SSA</label>
+          <input type="text" id="codiceSSA" name="codiceSSA" value="000763" maxlength="6">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="file">Seleziona file XLSX</label>
+        <input type="file" id="file" name="file" accept=".xlsx,.xls" required>
+      </div>
+
+      <button type="submit" id="submitBtn">Converti e Scarica ZIP</button>
+
+      <div class="progress" id="progress">
+        <span class="spinner"></span>
+        <span>Conversione in corso...</span>
+      </div>
+
+      <div class="message" id="message"></div>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('conversionForm');
+    const fileInput = document.getElementById('file');
+    const submitBtn = document.getElementById('submitBtn');
+    const progress = document.getElementById('progress');
+    const message = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!fileInput.files.length) {
+        showMessage('Seleziona un file', 'error');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      formData.append('codiceRegione', document.getElementById('codiceRegione').value);
+      formData.append('codiceAsl', document.getElementById('codiceAsl').value);
+      formData.append('codiceSSA', document.getElementById('codiceSSA').value);
+
+      submitBtn.disabled = true;
+      progress.classList.add('show');
+      message.classList.remove('show');
+
+      try {
+        const response = await fetch('/convert', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Errore durante la conversione');
+        }
+
+        // Download del file ZIP
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'export.zip';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+        showMessage('✓ Conversione completata! Il ZIP è stato scaricato.', 'success');
+        form.reset();
+
+      } catch (error) {
+        showMessage('✗ ' + error.message, 'error');
+      } finally {
+        submitBtn.disabled = false;
+        progress.classList.remove('show');
+      }
+    });
+
+    function showMessage(text, type) {
+      message.textContent = text;
+      message.className = `message show ${type}`;
+      setTimeout(() => {
+        message.classList.remove('show');
+      }, 5000);
+    }
+  </script>
+</body>
+</html>
